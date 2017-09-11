@@ -1,0 +1,36 @@
+{
+  "name": "namn",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./build/namn.cjs.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c",
+    "prepublish": "npm run lint && npm run format && nsp check && npm run build",
+    "lint": "eslint source",
+    "format": "prettier-standard \"source/**/*.js\""
+  },
+  "keywords": [],
+  "author": "rogerbf <roger@bergfa.lk> (http://bergfa.lk/)",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-eslint": "7.2.3",
+    "babel-plugin-external-helpers": "6.22.0",
+    "babel-preset-env": "1.6.0",
+    "babel-preset-stage-3": "6.24.1",
+    "eslint-config-standard": "10.2.1",
+    "eslint-plugin-import": "2.7.0",
+    "eslint-plugin-node": "5.1.1",
+    "eslint-plugin-promise": "3.5.0",
+    "eslint-plugin-standard": "3.0.1",
+    "nsp": "2.8.0",
+    "prettier-standard": "6.0.0",
+    "rollup": "0.49.3",
+    "rollup-plugin-babel": "2.7.1"
+  },
+  "module": "./build/namn.esm.js",
+  "files": [
+    "build",
+    "README.md"
+  ]
+}
