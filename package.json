@@ -32,5 +32,9 @@
   "files": [
     "build",
     "README.md"
-  ]
+  ],
+  "dependencies": {
+    "cheerio": "1.0.0-rc.2",
+    "isomorphic-unfetch": "2.0.0"
+  }
 }
