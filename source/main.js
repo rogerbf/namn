@@ -23,11 +23,18 @@ const getResultStrings = $ =>
     )
 
 const getNumbers = (sex, strings) => {
-  const filteredStrings = strings.filter(s => new RegExp(sex).test(s))
+  const sexRegExp = new RegExp(sex)
+  const filteredStrings = strings.filter(s => sexRegExp.test(s))
   const firstName = parseInt(
     filteredStrings.filter(s => /tilltalsnamn/.test(s)).pop()
   )
-  return { firstName }
+  const name = parseInt(
+    filteredStrings
+      .filter(s => /förnamn/.test(s))
+      .pop()
+      .replace(/\D/g, ``)
+  )
+  return { firstName, name }
 }
 
 const search = async name => {
@@ -38,9 +45,11 @@ const search = async name => {
   const total = getTotal($)
   const resultStrings = getResultStrings($)
   const women = getNumbers(`kvinnor`, resultStrings)
+  const men = getNumbers(`män`, resultStrings)
   return {
     total,
-    women
+    women,
+    men
   }
 }
 
