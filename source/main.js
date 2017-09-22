@@ -1,40 +1,40 @@
 import fetch from "isomorphic-unfetch"
 import cheerio from "cheerio"
 
-const getSearchUrl = name =>
+const buildSearchUrl = name =>
   `http://www.scb.se/hitta-statistik/sverige-i-siffror/namnsok/Search/?nameSearchInput=${name}`
 
-const getTotal = $ =>
+const extractTotal = html =>
   parseInt(
-    $(`h2`, `.nameSearchResultNumbers`)
+    html(`h2`, `.nameSearchResultNumbers`)
       .text()
       .trim()
       .replace(/\D/g, ``),
     10
   )
 
-const getResultStrings = $ =>
-  $(`p`, `.nameSearchResultNumbers`)
+const getResultStrings = html =>
+  html(`p`, `.nameSearchResultNumbers`)
     .toArray()
     .map(element =>
-      $(element)
+      html(element)
         .text()
         .trim()
     )
 
-const getNumbers = (sex, strings) => {
+const extractGenderSpecificData = (sex, data) => {
   const sexRegExp = new RegExp(sex)
-  const filteredStrings = strings.filter(s => sexRegExp.test(s))
+  const filteredData = data.filter(s => sexRegExp.test(s))
 
   const name = parseInt(
-    filteredStrings
+    filteredData
       .filter(s => /tilltalsnamn/.test(s))
       .pop()
       .replace(/\D/g, ``)
   )
 
   const firstName = parseInt(
-    filteredStrings
+    filteredData
       .filter(s => /förnamn/.test(s))
       .pop()
       .replace(/\D/g, ``)
@@ -43,26 +43,25 @@ const getNumbers = (sex, strings) => {
   return { firstName, name }
 }
 
-const search = async name => {
-  const url = getSearchUrl(name)
-  const response = await fetch(url)
-  const html = await response.text()
-  const $ = cheerio.load(html)
-  const total = getTotal($)
-  const resultStrings = getResultStrings($)
-  const women = getNumbers(`kvinnor`, resultStrings)
-  const men = getNumbers(`män`, resultStrings)
-  const lastName = parseInt(
-    resultStrings
+const extractLastName = data =>
+  parseInt(
+    data
       .filter(s => /efternamn/.test(s))
       .pop()
       .replace(/\D/g, ``)
   )
+
+const search = async name => {
+  const response = await fetch(buildSearchUrl(name))
+  const document = await response.text()
+  const html = cheerio.load(document)
+  const data = getResultStrings(html)
+
   return {
-    total,
-    women,
-    men,
-    lastName
+    total: extractTotal(html),
+    women: extractGenderSpecificData(`kvinnor`, data),
+    men: extractGenderSpecificData(`män`, data),
+    lastName: extractLastName(data)
   }
 }
 
