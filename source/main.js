@@ -65,4 +65,4 @@ const search = async name => {
   }
 }
 
-export default search
+export default { search }
