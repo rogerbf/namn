@@ -13,7 +13,7 @@ const extractTotal = html =>
     10
   )
 
-const getResultStrings = html =>
+const prepareResults = html =>
   html(`p`, `.nameSearchResultNumbers`)
     .toArray()
     .map(element =>
@@ -22,9 +22,9 @@ const getResultStrings = html =>
         .trim()
     )
 
-const extractGenderSpecificData = (sex, data) => {
-  const sexRegExp = new RegExp(sex)
-  const filteredData = data.filter(s => sexRegExp.test(s))
+const extractGenderSpecificData = (gender, data) => {
+  const genderRegExp = new RegExp(gender)
+  const filteredData = data.filter(s => genderRegExp.test(s))
 
   const name = parseInt(
     filteredData
@@ -54,14 +54,15 @@ const extractLastName = data =>
 const search = async name => {
   const response = await fetch(constructSearchUrl(name))
   const document = await response.text()
+
   const html = cheerio.load(document)
-  const data = getResultStrings(html)
+  const rows = prepareResults(html)
 
   return {
     total: extractTotal(html),
-    women: extractGenderSpecificData(`kvinnor`, data),
-    men: extractGenderSpecificData(`män`, data),
-    lastName: extractLastName(data)
+    women: extractGenderSpecificData(`kvinnor`, rows),
+    men: extractGenderSpecificData(`män`, rows),
+    lastName: extractLastName(rows)
   }
 }
 
