@@ -1,7 +1,7 @@
 import fetch from "isomorphic-unfetch"
 import cheerio from "cheerio"
 
-const buildSearchUrl = name =>
+const constructSearchUrl = name =>
   `http://www.scb.se/hitta-statistik/sverige-i-siffror/namnsok/Search/?nameSearchInput=${name}`
 
 const extractTotal = html =>
@@ -52,7 +52,7 @@ const extractLastName = data =>
   )
 
 const search = async name => {
-  const response = await fetch(buildSearchUrl(name))
+  const response = await fetch(constructSearchUrl(name))
   const document = await response.text()
   const html = cheerio.load(document)
   const data = getResultStrings(html)
