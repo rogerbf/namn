@@ -51,7 +51,7 @@ const extractLastName = data =>
       .replace(/\D/g, ``)
   )
 
-const search = async name => {
+export const getStatistics = async name => {
   const response = await fetch(constructSearchUrl(name))
   const document = await response.text()
 
@@ -65,5 +65,3 @@ const search = async name => {
     lastName: extractLastName(rows)
   }
 }
-
-export default { search }
